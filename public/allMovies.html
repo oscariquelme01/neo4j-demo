@@ -39,6 +39,11 @@
         button:hover {
             background-color: #1E90FF;
         }
+        #navButtons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
         #results, #movieList {
             padding: 20px;
             display: flex;
@@ -67,7 +72,11 @@
 </head>
 <body>
     <header>
-        <h1>Listado de Todas las Películas</h1>
+        <h1>Todos las peliculas</h1>
+        <div id="navButtons">
+            <button onclick="location.href='allMovies.html'">Todas las películas</button>
+            <button onclick="location.href='allUsers.html'">Usuarios</button>
+        </div>
     </header>
     <div id="searchContainer">
         <input type="text" id="searchInput" placeholder="Buscar por título...">

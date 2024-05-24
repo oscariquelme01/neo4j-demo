@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalles del genero</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Detalles del genero</h1>
+
+    <ul id="moviesContainer"></ul>
+
+    <script>
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const title = urlParams.get('genre');
+            fetchMovieDetails(title);
+        };
+
+        function fetchMovieDetails(genre) {
+            const container = document.getElementById('moviesContainer')
+
+            fetch(`/api/genre-details?genre=${encodeURIComponent(genre)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (container) {
+                        let content = ''
+                        data.forEach(item => {
+                            content += `<li onclick="redirectToDetails('${item.title}')">${item.title} Rating: ${item.averageRating}</li>`;
+                        });
+
+                        container.innerHTML = content
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching genre details:', error);
+                    document.getElementById('genreMovies').textContent = 'No se pudo cargar la información del genero';
+                });
+        }
+
+        function redirectToDetails(title) {
+            window.location.href = `movieDetails.html?title=${encodeURIComponent(title)}`;
+        }
+    </script>
+</body>
+</html>

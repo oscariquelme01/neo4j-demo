@@ -39,6 +39,11 @@
         button:hover {
             background-color: #1E90FF;
         }
+        #navButtons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
         #results, #userList {
             padding: 20px;
             display: flex;
@@ -67,7 +72,11 @@
 </head>
 <body>
     <header>
-        <h1>Listado de Todos los Usuarios</h1>
+        <h1>Todos los usuarios</h1>
+        <div id="navButtons">
+            <button onclick="location.href='allMovies.html'">Todas las películas</button>
+            <button onclick="location.href='index.html'">Inicio</button>
+        </div>
     </header>
     <div id="searchContainer">
         <input type="text" id="searchInput" placeholder="Buscar por ID...">
@@ -105,11 +114,11 @@
         window.onload = function() {
             fetch('/api/users')
                 .then(response => response.json())
-                .then(users => {
+                .then(userIds => {
                     const listElement = document.getElementById('userList');
                     let content = '<ul>';
-                    users.forEach(user => {
-                        content += `<li>ID: ${user.id}, Name: ${user.name}</li>`;
+                    userIds.forEach(id => {
+                        content += `<li>ID: ${id}</li>`;
                     });
                     content += '</ul>';
                     listElement.innerHTML = content;

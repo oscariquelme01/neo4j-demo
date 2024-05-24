@@ -26,7 +26,7 @@
         };
 
         function fetchMovieDetails(title) {
-            fetch(`/movie-details?title=${encodeURIComponent(title)}`)
+            fetch(`/api/movie-details?title=${encodeURIComponent(title)}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('movieTitle').textContent = data.title;

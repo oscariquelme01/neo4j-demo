@@ -129,32 +129,31 @@
     <div id="searchContainer">
         <input type="text" id="searchInput" placeholder="Buscar por título...">
         <button onclick="buscarPeliculas()">Buscar Películas</button>
-        <button onclick="buscarPorGenero()">Buscar por género</button>
     </div>
     <div id="results"></div>
 
     <div id="genreContainer">
     <h2>Géneros</h2>
     <ul id="genreList">
-        <li onclick="buscarPorGenero('Action')">Action</li>
-        <li onclick="buscarPorGenero('Adventure')">Adventure</li>
-        <li onclick="buscarPorGenero('Animation')">Animation</li>
-        <li onclick="buscarPorGenero('Children\'s')">Children's</li>
-        <li onclick="buscarPorGenero('Comedy')">Comedy</li>
-        <li onclick="buscarPorGenero('Crime')">Crime</li>
-        <li onclick="buscarPorGenero('Documentary')">Documentary</li>
-        <li onclick="buscarPorGenero('Drama')">Drama</li>
-        <li onclick="buscarPorGenero('Fantasy')">Fantasy</li>
-        <li onclick="buscarPorGenero('Film-Noir')">Film-Noir</li>
-        <li onclick="buscarPorGenero('Horror')">Horror</li>
-        <li onclick="buscarPorGenero('Musical')">Musical</li>
-        <li onclick="buscarPorGenero('Mystery')">Mystery</li>
-        <li onclick="buscarPorGenero('Romance')">Romance</li>
-        <li onclick="buscarPorGenero('Sci-Fi')">Sci-Fi</li>
-        <li onclick="buscarPorGenero('Thriller')">Thriller</li>
-        <li onclick="buscarPorGenero('War')">War</li>
-        <li onclick="buscarPorGenero('Western')">Western</li>
-        <li onclick="buscarPorGenero('(no genres listed)')">(no genres listed)</li>
+        <li onclick="redirectoToGenreDetails('Action')">Action</li>
+        <li onclick="redirectoToGenreDetails('Adventure')">Adventure</li>
+        <li onclick="redirectoToGenreDetails('Animation')">Animation</li>
+        <li onclick="redirectoToGenreDetails('Children\'s')">Children's</li>
+        <li onclick="redirectoToGenreDetails('Comedy')">Comedy</li>
+        <li onclick="redirectoToGenreDetails('Crime')">Crime</li>
+        <li onclick="redirectoToGenreDetails('Documentary')">Documentary</li>
+        <li onclick="redirectoToGenreDetails('Drama')">Drama</li>
+        <li onclick="redirectoToGenreDetails('Fantasy')">Fantasy</li>
+        <li onclick="redirectoToGenreDetails('Film-Noir')">Film-Noir</li>
+        <li onclick="redirectoToGenreDetails('Horror')">Horror</li>
+        <li onclick="redirectoToGenreDetails('Musical')">Musical</li>
+        <li onclick="redirectoToGenreDetails('Mystery')">Mystery</li>
+        <li onclick="redirectoToGenreDetails('Romance')">Romance</li>
+        <li onclick="redirectoToGenreDetails('Sci-Fi')">Sci-Fi</li>
+        <li onclick="redirectoToGenreDetails('Thriller')">Thriller</li>
+        <li onclick="redirectoToGenreDetails('War')">War</li>
+        <li onclick="redirectoToGenreDetails('Western')">Western</li>
+        <li onclick="redirectoToGenreDetails('(no genres listed)')">(no genres listed)</li>
     </ul>
 </div>
 
@@ -163,12 +162,6 @@
         function buscarPeliculas() {
             const input = document.getElementById('searchInput').value;
             const url = input ? `/query?title=${encodeURIComponent(input)}` : `/query`;
-            cargarDatos(url);
-        }
-
-        function buscarPorGenero() {
-            const input = document.getElementById('searchInput').value;
-            const url = `/query?genres=${encodeURIComponent(input)}`;
             cargarDatos(url);
         }
 
@@ -188,6 +181,10 @@
                     console.error('Error al cargar los datos:', error);
                     document.getElementById('results').innerHTML = '<p>Error al cargar los datos.</p>';
                 });
+        }
+
+        function redirectoToGenreDetails(genre) {
+            window.location.href = `genreDetails.html?genre=${encodeURIComponent(genre)}`
         }
 
         function redirectToDetails(title) {
