@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Todos los Usuarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        #searchContainer {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: #fff;
+        }
+        #searchInput, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #007BFF;
+        }
+        button {
+            background-color: #6495ED;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1E90FF;
+        }
+        #results, #userList {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            width: 60%;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #B0C4DE;
+            cursor: pointer;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        li:hover {
+            background-color: #F0F8FF;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Listado de Todos los Usuarios</h1>
+    </header>
+    <div id="searchContainer">
+        <input type="text" id="searchInput" placeholder="Buscar por ID...">
+        <button onclick="buscarUsuarios()">Buscar Usuarios</button>
+    </div>
+    <div id="results"></div>
+    <div id="userList"></div>
+
+    <script>
+        function buscarUsuarios() {
+            const input = document.getElementById('searchInput').value;
+            const url = input ? `/api/users?id=${encodeURIComponent(input)}` : `/api/users`;
+            cargarDatos(url);
+        }
+
+        function cargarDatos(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsElement = document.getElementById('results');
+                    let content = '<ul>';
+                    data.forEach(item => {
+                        console.log(item)
+                        content += `<li>ID: ${item.id}</li>`;
+                    });
+                    content += '</ul>';
+                    resultsElement.innerHTML = content;
+                })
+                .catch(error => {
+                    console.error('Error al cargar los datos:', error);
+                    document.getElementById('results').innerHTML = '<p>Error al cargar los datos.</p>';
+                });
+        }
+
+        window.onload = function() {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(users => {
+                    const listElement = document.getElementById('userList');
+                    let content = '<ul>';
+                    users.forEach(user => {
+                        content += `<li>ID: ${user.id}, Name: ${user.name}</li>`;
+                    });
+                    content += '</ul>';
+                    listElement.innerHTML = content;
+                })
+                .catch(error => {
+                    console.error('Error al cargar los usuarios:', error);
+                    document.getElementById('userList').innerHTML = '<p>Error al cargar los usuarios.</p>';
+                });
+        };
+    </script>
+</body>
+</html>

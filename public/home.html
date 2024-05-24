@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Página Principal de la Aplicación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007BFF; /* Azul */
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        #searchContainer {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        #searchInput {
+            width: 50%;
+            padding: 10px;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+        }
+        #searchButton {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #28A745; /* Verde */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #searchButton:hover {
+            background-color: #218838;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: white;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bienvenido a la Aplicación de Películas</h1>
+    </header>
+    <div id="searchContainer">
+        <input type="text" id="searchInput" placeholder="Buscar películas...">
+        <button id="searchButton" onclick="buscarPeliculas()">Buscar</button>
+    </div>
+    <div id="results"></div>
+
+    <script>
+        function buscarPeliculas() {
+            const input = document.getElementById('searchInput').value;
+            const resultsElement = document.getElementById('results');
+            // Aquí deberías hacer la llamada al servidor, por ahora solo es un ejemplo estático
+            if (input) {
+                resultsElement.innerHTML = `<ul><li>Resultados para "${input}"</li></ul>`;
+            } else {
+                resultsElement.innerHTML = `<ul><li>Por favor, introduce un término de búsqueda.</li></ul>`;
+            }
+        }
+    </script>
+</body>
+</html>

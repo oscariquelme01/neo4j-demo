@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Página Principal de Neo4j</title>
+    <style>
+
+        * {box-sizing: border-box}
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007BFF; /* Azul más oscuro */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative; /* Posicionamiento relativo para los botones */
+        }
+        #navButtons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        #searchContainer {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: #fff; /* Fondo blanco para el contenedor de búsqueda */
+        }
+        #searchInput, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #007BFF; /* Borde azul */
+        }
+        button {
+            background-color: #6495ED; /* Cornflower Blue */
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1E90FF; /* Dodger Blue */
+        }
+        #results {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            width: 60%; /* Controla el ancho de la lista de resultados */
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #B0C4DE; /* Light Steel Blue */
+            cursor: pointer;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        li:hover {
+            background-color: #F0F8FF; /* Alice Blue */
+        }
+
+
+
+
+        /* Style the tab */
+        .genreList {
+          float: left;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
+          width: 30%;
+          height: 300px;
+        }
+        
+        /* Style the buttons that are used to open the tab content */
+        .genreList button {
+          display: block;
+          background-color: inherit;
+          color: black;
+          padding: 22px 16px;
+          width: 100%;
+          border: none;
+          outline: none;
+          text-align: left;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+        
+        /* Change background color of buttons on hover */
+        .genreList button:hover {
+          background-color: #ddd;
+        }
+        
+        /* Create an active/current "tab button" class */
+        .genreList button.active {
+          background-color: #ccc;
+        }
+        
+        /* Style the tab content */
+        .genreListcontent {
+          float: left;
+          padding: 0px 12px;
+          border: 1px solid #ccc;
+          width: 0%;
+          border-left: none;
+          height: 300px;
+        }
+    </style>    
+</head>
+<body>
+    <header>
+        <h1>Resultados de la Consulta a Neo4j</h1>
+        <div id="navButtons">
+            <button onclick="location.href='allMovies.html'">Todas las películas</button>
+            <button onclick="location.href='allUsers.html'">Usuarios</button>
+        </div>
+    </header>
+    <div id="searchContainer">
+        <input type="text" id="searchInput" placeholder="Buscar por título...">
+        <button onclick="buscarPeliculas()">Buscar Películas</button>
+        <button onclick="buscarPorGenero()">Buscar por género</button>
+    </div>
+    <div id="results"></div>
+
+    <div id="genreContainer">
+    <h2>Géneros</h2>
+    <ul id="genreList">
+        <li onclick="buscarPorGenero('Action')">Action</li>
+        <li onclick="buscarPorGenero('Adventure')">Adventure</li>
+        <li onclick="buscarPorGenero('Animation')">Animation</li>
+        <li onclick="buscarPorGenero('Children\'s')">Children's</li>
+        <li onclick="buscarPorGenero('Comedy')">Comedy</li>
+        <li onclick="buscarPorGenero('Crime')">Crime</li>
+        <li onclick="buscarPorGenero('Documentary')">Documentary</li>
+        <li onclick="buscarPorGenero('Drama')">Drama</li>
+        <li onclick="buscarPorGenero('Fantasy')">Fantasy</li>
+        <li onclick="buscarPorGenero('Film-Noir')">Film-Noir</li>
+        <li onclick="buscarPorGenero('Horror')">Horror</li>
+        <li onclick="buscarPorGenero('Musical')">Musical</li>
+        <li onclick="buscarPorGenero('Mystery')">Mystery</li>
+        <li onclick="buscarPorGenero('Romance')">Romance</li>
+        <li onclick="buscarPorGenero('Sci-Fi')">Sci-Fi</li>
+        <li onclick="buscarPorGenero('Thriller')">Thriller</li>
+        <li onclick="buscarPorGenero('War')">War</li>
+        <li onclick="buscarPorGenero('Western')">Western</li>
+        <li onclick="buscarPorGenero('(no genres listed)')">(no genres listed)</li>
+    </ul>
+</div>
+
+
+    <script>
+        function buscarPeliculas() {
+            const input = document.getElementById('searchInput').value;
+            const url = input ? `/query?title=${encodeURIComponent(input)}` : `/query`;
+            cargarDatos(url);
+        }
+
+        function buscarPorGenero() {
+            const input = document.getElementById('searchInput').value;
+            const url = `/query?genres=${encodeURIComponent(input)}`;
+            cargarDatos(url);
+        }
+
+        function cargarDatos(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsElement = document.getElementById('results');
+                    let content = '<ul>';
+                    data.forEach(item => {
+                        content += `<li onclick="redirectToDetails('${item.title}')">${item.title}</li>`;
+                    });
+                    content += '</ul>';
+                    resultsElement.innerHTML = content;
+                })
+                .catch(error => {
+                    console.error('Error al cargar los datos:', error);
+                    document.getElementById('results').innerHTML = '<p>Error al cargar los datos.</p>';
+                });
+        }
+
+        function redirectToDetails(title) {
+            window.location.href = `movieDetails.html?title=${encodeURIComponent(title)}`;
+        }
+    </script>
+</body>
+</html>
