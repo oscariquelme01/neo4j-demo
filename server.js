@@ -38,7 +38,9 @@ app.get("/query", async (req, res) => {
 });
 
 app.get("/api/genre-details", async (req, res) => {
-  const genre = req.query.genre;
+  const genre = req.query.genre
+  const limit = parseInt(req.query.limit)
+  const offset = parseInt(req.query.offset)
 
   const query = `MATCH (m:Movie)<-[r:RATED]-(u:User) WHERE ANY(genre IN m.genres WHERE genre = '${genre}') RETURN m.title AS title, AVG(r.rating) AS averageRating ORDER BY averageRating DESC`;
   const params = { genre };
@@ -46,13 +48,16 @@ app.get("/api/genre-details", async (req, res) => {
   try {
     const results = await fetchQueryResult(query, params);
     if (results.length > 0) {
-      // Asegurarse de devolver todas las propiedades del node 'genre'
-      console.log(results)
+      // Devolver los resultados segun los parametros especificados en la request
+      console.log(results.length)
       res.json(
-        results.map((record) => ({
-          title: record.title,
-          averageRating: record.averageRating,
-        })),
+        {
+          totalItems: results.length,
+          results: results.slice(offset, offset + limit).map((record) => ({
+            title: record.title,
+            averageRating: record.averageRating,
+          })),
+      }
       );
     } else {
       res.status(404).send("Película no encontrada");
