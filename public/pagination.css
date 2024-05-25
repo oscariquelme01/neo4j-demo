@@ -1,0 +1,22 @@
+.active {
+	background-color: #007BFF;
+}
+
+#pagination-numbers {
+	display: flex;
+	gap: 4px;
+}
+
+.pagination-button {
+	padding: 0.4rem;
+	color: inherit;
+	border: none;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+	border-radius: 4px;
+}
+
+.pagination-button:not(.active):hover {
+	background-color: #CCCCCC;
+} 
