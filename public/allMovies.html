@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Todas las Películas</title>
+    <link rel="stylesheet" href="pagination.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -83,8 +84,8 @@
         <button onclick="buscarPeliculas()">Buscar Películas</button>
         <button onclick="buscarPorGenero()">Buscar por género</button>
     </div>
-    <div id="results"></div>
-    <div id="movieList"></div>
+    <ul id="paginated-container"></ul>
+    <div id="pagination-numbers"></div>
 
     <script>
         function buscarPeliculas() {
@@ -122,16 +123,19 @@
         }
 
         window.onload = function() {
-            fetch('/api/movies')
+            const { offset, limit } = getUrlParams()
+            fetch(`/api/movies?offset=${encodeURIComponent(offset)}&limit=${encodeURIComponent(limit)}`)
                 .then(response => response.json())
                 .then(movies => {
-                    const listElement = document.getElementById('movieList');
-                    let content = '<ul>';
-                    movies.forEach(movie => {
-                        content += `<li onclick="redirectToDetails('${movie.title}')">${movie.title}</li>`;
+                    const listElement = document.getElementById('paginated-container');
+                    movies.results.forEach(movie => {
+                        const movieItem = document.createElement('li')
+                        movieItem.textContent = `${movie.title}`
+                        listElement.appendChild(movieItem)
+
                     });
-                    content += '</ul>';
-                    listElement.innerHTML = content;
+
+                    createPagButtons(movies.totalItems, offset, offset)
                 })
                 .catch(error => {
                     console.error('Error al cargar las películas:', error);
@@ -139,5 +143,6 @@
                 });
         };
     </script>
+    <script src="./pagination.js"></script>
 </body>
 </html>

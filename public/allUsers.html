@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Todos los Usuarios</title>
+    <link rel="stylesheet" href="pagination.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -82,52 +83,39 @@
         <input type="text" id="searchInput" placeholder="Buscar por ID...">
         <button onclick="buscarUsuarios()">Buscar Usuarios</button>
     </div>
-    <div id="results"></div>
-    <div id="userList"></div>
+    <ul id="paginated-list"></ul>
+    <div id="pagination-numbers"></div>
 
     <script>
-        function buscarUsuarios() {
-            const input = document.getElementById('searchInput').value;
-            const url = input ? `/api/users?id=${encodeURIComponent(input)}` : `/api/users`;
-            cargarDatos(url);
-        }
-
-        function cargarDatos(url) {
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const resultsElement = document.getElementById('results');
-                    let content = '<ul>';
-                    data.forEach(item => {
-                        console.log(item)
-                        content += `<li>ID: ${item.id}</li>`;
-                    });
-                    content += '</ul>';
-                    resultsElement.innerHTML = content;
-                })
-                .catch(error => {
-                    console.error('Error al cargar los datos:', error);
-                    document.getElementById('results').innerHTML = '<p>Error al cargar los datos.</p>';
-                });
+        function redirectToDetails(userId) {
+            window.location.href = `userDetails.html?userId=${userId}`
         }
 
         window.onload = function() {
-            fetch('/api/users')
+            const { offset, limit } = getUrlParams();
+
+            fetch(`/api/users?offset=${offset}&limit=${limit}`)
                 .then(response => response.json())
-                .then(userIds => {
-                    const listElement = document.getElementById('userList');
-                    let content = '<ul>';
-                    userIds.forEach(id => {
-                        content += `<li>ID: ${id}</li>`;
+                .then(data => {
+                    const listElement = document.getElementById('paginated-list');
+                    console.log(data.userIds)
+                    data.userIds.forEach(id => {
+                        const userElement = document.createElement('li')
+                        userElement.addEventListener('click', () => {
+                            redirectToDetails(id)
+                        })
+                        userElement.textContent = `ID: ${id}`
+                        listElement.appendChild(userElement)
                     });
-                    content += '</ul>';
-                    listElement.innerHTML = content;
+
+                    createPagButtons(data.totalItems, offset, offset)
                 })
                 .catch(error => {
                     console.error('Error al cargar los usuarios:', error);
-                    document.getElementById('userList').innerHTML = '<p>Error al cargar los usuarios.</p>';
+                    document.getElementById('pagination-list').innerHTML = '<p>Error al cargar los usuarios.</p>';
                 });
         };
     </script>
+    <script src="./pagination.js"></script>
 </body>
 </html>

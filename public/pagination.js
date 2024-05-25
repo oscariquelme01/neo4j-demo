@@ -58,7 +58,6 @@ function createPagButtons(totalItems, offset, activePage) {
 
 function getUrlParams() {
   const urlParams = new URLSearchParams(window.location.search);
-  const genre = urlParams.get("genre");
   let offset = parseInt(urlParams.get("offset"));
   let limit = parseInt(urlParams.get("limit"));
   if (!limit) {
@@ -74,7 +73,7 @@ function getUrlParams() {
   const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
   window.history.replaceState(null, "", newUrl);
 
-  return { offset, limit, genre };
+  return { offset, limit };
 }
 
 function setUrlParams(offset, limit, update = true) {

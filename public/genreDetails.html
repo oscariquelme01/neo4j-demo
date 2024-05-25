@@ -19,7 +19,8 @@
 
     <script>
         window.onload = async function () {
-          const { genre, offset, limit } = getUrlParams();
+          const { offset, limit } = getUrlParams();
+          const genre = getGenre()
 
           fetchMovieDetails(genre, offset, limit)
             .then((data) => {
@@ -52,6 +53,11 @@
 
         function redirectToDetails(title) {
             window.location.href = `movieDetails.html?title=${encodeURIComponent(title)}`;
+        }
+
+        function getGenre() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('genre')
         }
 
     </script>

@@ -96,10 +96,19 @@ app.get("/api/movie-details", async (req, res) => {
 
 app.get("/api/movies", async (req, res) => {
   const query = "MATCH (movie:Movie) RETURN movie.title as title";
+  const limit = parseInt(req.query.limit)
+  const offset = parseInt(req.query.offset)
 
   try {
     const results = await fetchQueryResult(query);
-    res.json(results);
+    res.json(
+        {
+          totalItems: results.length,
+          results: results.slice(offset, offset + limit).map((record) => ({
+            title: record.title,
+          }))
+      }
+);
   } catch (error) {
     console.error("Error al obtener todas las películas:", error);
     res.status(500).send("Error al realizar la consulta");
@@ -108,27 +117,45 @@ app.get("/api/movies", async (req, res) => {
 
 app.get("/api/users", async (req, res) => {
   const userId = req.query.id;
+  const limit = parseInt(req.query.limit)
+  const offset = parseInt(req.query.offset)
+
   console.log(req.query);
   let query = "";
   let params = {};
 
-  if (userId) {
-    query =
-      "MATCH (user:User) WHERE user.userId = $userId RETURN user.userId AS user";
-    params = { userId };
-  } else {
-    query = "MATCH (user:User) RETURN user.userId as userId";
-  }
+  query = "MATCH (user:User) RETURN user.userId as userId";
 
   try {
     const results = await fetchQueryResult(query, params);
 
-    res.json(results.map((record) => record.userId));
+      res.json(
+        {
+          totalItems: results.length,
+          userIds: results.slice(offset, offset + limit).map((record) => (record.userId))
+      }
+      );
   } catch (error) {
     console.error("Error al obtener los usuarios:", error);
     res.status(500).send("Error al realizar la consulta");
   }
 });
+
+app.get('/api/user-details', async (req, res) => {
+  const query = 'MATCH (targetUser:User {userId: $userId})-[:RATED]->(movie:Movie)<-[:RATED]-(similarUser:User) WITH similarUser, targetUser MATCH (similarUser)-[:RATED]->(recommendedMovie:Movie) WHERE NOT (targetUser)-[:RATED]->(recommendedMovie) RETURN recommendedMovie.title AS RecommendedMovies, COUNT(*) AS RecommendationStrength ORDER BY RecommendationStrength DESC LIMIT 10 '
+
+  const userId = req.query.userId
+  try {
+    const params = { userId }
+    const results = await fetchQueryResult(query, params)
+
+    console.log(results)
+    res.json(results)
+  } catch (error) {
+    console.error("Error al obtener los detalles del usuario:", error);
+    res.status(500).send("Error al realizar la consulta");
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
