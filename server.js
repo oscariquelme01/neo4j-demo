@@ -46,13 +46,15 @@ app.get("/api/genre-details", async (req, res) => {
   const params = { genre };
 
   try {
+    const initialIndex = limit * offset
+    const finalIndex = initialIndex + limit
     const results = await fetchQueryResult(query, params);
     if (results.length > 0) {
       // Devolver los resultados segun los parametros especificados en la request
       res.json(
         {
           totalItems: results.length,
-          results: results.slice(offset, offset + limit).map((record) => ({
+          results: results.slice(initialIndex, finalIndex + limit).map((record) => ({
             title: record.title,
             averageRating: record.averageRating,
           })),
@@ -99,11 +101,14 @@ app.get("/api/movies", async (req, res) => {
   const offset = parseInt(req.query.offset)
 
   try {
+    const initialIndex = limit * offset
+    const finalIndex = initialIndex + limit
+
     const results = await fetchQueryResult(query);
     res.json(
         {
           totalItems: results.length,
-          results: results.slice(offset, offset + limit).map((record) => ({
+          results: results.slice(initialIndex, finalIndex + limit).map((record) => ({
             title: record.title,
           }))
       }
@@ -126,11 +131,13 @@ app.get("/api/users", async (req, res) => {
 
   try {
     const results = await fetchQueryResult(query, params);
+    const initialIndex = limit * offset
+    const finalIndex = initialIndex + limit
 
       res.json(
         {
           totalItems: results.length,
-          userIds: results.slice(offset, offset + limit).map((record) => (record.userId))
+          userIds: results.slice(initialIndex , finalIndex).map((record) => (record.userId))
       }
       );
   } catch (error) {

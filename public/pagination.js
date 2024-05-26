@@ -19,30 +19,24 @@ function createPagButtons(totalItems, offset, activePage) {
   });
 
   // create pag buttons
-  let initialPage;
-  // weird edge case where multiple of 10s would get jumped to the next page
-  if (offset % 10 === 0) {
-    initialPage = Math.floor((offset - 1) / 10) * 10;
-  } else {
-    initialPage = Math.floor(offset / 10) * 10;
-  }
+  let initialPage = Math.floor(offset / 10) * 10;
   for (
     let i = initialPage * limit, j = initialPage;
     i < totalItems && j < initialPage + maxPages;
     i += limit
   ) {
-    j++;
     const button = document.createElement("button");
     button.classList.add("pagination-button");
-    button.textContent = j.toString();
+    button.textContent = (j + 1).toString();
     if (activePage === j) {
       button.classList.add("active");
     }
     paginationNumberContainer.appendChild(button);
     button.addEventListener("click", () => {
-      setUrlParams(j, limit);
+      setUrlParams(j - 1, limit);
       location.reload();
     });
+    j++;
   }
 
   const nextButton = document.createElement("button");
@@ -65,7 +59,7 @@ function getUrlParams() {
     urlParams.set("limit", limit);
   }
   if (!offset) {
-    offset = 1;
+    offset = 0;
     urlParams.set("offset", offset);
   }
 
