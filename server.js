@@ -49,7 +49,6 @@ app.get("/api/genre-details", async (req, res) => {
     const results = await fetchQueryResult(query, params);
     if (results.length > 0) {
       // Devolver los resultados segun los parametros especificados en la request
-      console.log(results.length)
       res.json(
         {
           totalItems: results.length,
@@ -120,9 +119,8 @@ app.get("/api/users", async (req, res) => {
   const limit = parseInt(req.query.limit)
   const offset = parseInt(req.query.offset)
 
-  console.log(req.query);
   let query = "";
-  let params = {};
+  let params = { };
 
   query = "MATCH (user:User) RETURN user.userId as userId";
 
@@ -142,14 +140,13 @@ app.get("/api/users", async (req, res) => {
 });
 
 app.get('/api/user-details', async (req, res) => {
-  const query = 'MATCH (targetUser:User {userId: $userId})-[:RATED]->(movie:Movie)<-[:RATED]-(similarUser:User) WITH similarUser, targetUser MATCH (similarUser)-[:RATED]->(recommendedMovie:Movie) WHERE NOT (targetUser)-[:RATED]->(recommendedMovie) RETURN recommendedMovie.title AS RecommendedMovies, COUNT(*) AS RecommendationStrength ORDER BY RecommendationStrength DESC LIMIT 10 '
-
   const userId = req.query.userId
+
+  const query = `MATCH (targetUser:User {userId: ${userId}})-[:RATED]->(movie:Movie)<-[:RATED]-(similarUser:User) WITH similarUser, targetUser MATCH (similarUser)-[:RATED]->(recommendedMovie:Movie) WHERE NOT (targetUser)-[:RATED]->(recommendedMovie) RETURN recommendedMovie.title AS RecommendedMovies, COUNT(*) AS RecommendationStrength ORDER BY RecommendationStrength DESC LIMIT 10 `
   try {
     const params = { userId }
     const results = await fetchQueryResult(query, params)
 
-    console.log(results)
     res.json(results)
   } catch (error) {
     console.error("Error al obtener los detalles del usuario:", error);

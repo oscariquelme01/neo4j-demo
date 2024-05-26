@@ -12,9 +12,9 @@
 </head>
 <body>
     <h1>Detalles del usuario</h1>
-    <div id="movieDetails">
-        <h2 id="movieTitle">Cargando...</h2>
-        <p id="movieInfo"></p>
+    <div id="userWrapper">
+        <h2 id="userDetails"></h2>
+        <ul id="userRecomendations"></ul>
         <button onclick="window.history.back()">Volver</button>
     </div>
 
@@ -22,6 +22,9 @@
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const userId = urlParams.get('userId');
+
+            const userElement = document.getElementById('userDetails')
+            userElement.textContent = `User id: ${userId}`
             fetchUserDetails(userId);
         };
 
@@ -29,14 +32,15 @@
             fetch(`/api/user-details?userId=${encodeURIComponent(userId)}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
-                    document.getElementById('movieTitle').textContent = data.title;
-                    document.getElementById('movieInfo').textContent = `Géneros: ${data.genres.join(', ')}`;
+                    const userRecomendationsElement = document.getElementById('userRecomendations')
+                    for (let recommendation of data) {
+                        const recomendationElement = document.createElement('li')
+                        recomendationElement.textContent = `Title: ${recommendation.RecommendedMovies} Strength: ${recommendation.RecommendationStrength}`
+                        userRecomendationsElement.appendChild(recomendationElement)
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching movie details:', error);
-                    document.getElementById('movieTitle').textContent = 'Error';
-                    document.getElementById('movieInfo').textContent = 'No se pudo cargar la información de la película';
                 });
         }
     </script>
