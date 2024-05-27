@@ -77,15 +77,23 @@ app.get("/api/movie-details", async (req, res) => {
     return res.status(400).send("Título no especificado");
   }
 
-  const query =
-    "MATCH (movie:Movie) WHERE movie.title = $title RETURN movie AS movieDetails";
-  const params = { title };
 
   try {
-    const results = await fetchQueryResult(query, params);
-    if (results.length > 0) {
+    let query =
+      "MATCH (movie:Movie) WHERE movie.title = $title RETURN movie AS movieDetails";
+    const params = { title };
+
+    const genreResults = await fetchQueryResult(query, params);
+    if (genreResults.length > 0) {
+      const genres = genreResults[0].movieDetails.properties.genres
       // Asegurarse de devolver todas las propiedades del nodo 'movie'.
-      res.json(results[0].movieDetails.properties);
+      query = `WITH '${title}' AS movieTitle MATCH (m1:Movie {title: movieTitle}) MATCH (m2:Movie) WHERE m1 <> m2 AND any(genre IN m1.genres WHERE genre IN m2.genres) WITH m1, m2 MATCH (m1)<-[r1:RATED]-(u1:User) WITH m1, m2, AVG(r1.rating) AS m1AvgRating MATCH (m2)<-[r2:RATED]-(u2:User) WITH m2.title AS SimilarMovie, AVG(r2.rating) AS m2AvgRating, m1AvgRating ORDER BY abs(m2AvgRating - m1AvgRating) ASC LIMIT 10 RETURN SimilarMovie, m2AvgRating AS AverageRating`
+      const recomendationResults = await fetchQueryResult(query, params)
+
+      res.json({
+        genres: genres,
+        recommendations: recomendationResults
+      });
     } else {
       res.status(404).send("Película no encontrada");
     }
