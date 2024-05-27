@@ -4,16 +4,135 @@
     <meta charset="UTF-8">
     <title>Detalles de la Película</title>
     <style>
+        * {box-sizing: border-box}
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
+        header {
+            background-color: #007BFF; /* Azul más oscuro */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative; /* Posicionamiento relativo para los botones */
+        }
+        #navButtons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        #searchContainer {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: #fff; /* Fondo blanco para el contenedor de búsqueda */
+        }
+        #searchInput, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #007BFF; /* Borde azul */
+        }
+        button {
+            background-color: #6495ED; /* Cornflower Blue */
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1E90FF; /* Dodger Blue */
+        }
+        #results {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            width: 60%; /* Controla el ancho de la lista de resultados */
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #B0C4DE; /* Light Steel Blue */
+            cursor: pointer;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        li:hover {
+            background-color: #F0F8FF; /* Alice Blue */
+        }
+  
+  
+  
+  
+        /* Style the tab */
+        .genreList {
+          float: left;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
+          width: 30%;
+          height: 300px;
+        }
+        
+        /* Style the buttons that are used to open the tab content */
+        .genreList button {
+          display: block;
+          background-color: inherit;
+          color: black;
+          padding: 22px 16px;
+          width: 100%;
+          border: none;
+          outline: none;
+          text-align: left;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+        
+        /* Change background color of buttons on hover */
+        .genreList button:hover {
+          background-color: #ddd;
+        }
+        
+        /* Create an active/current "tab button" class */
+        .genreList button.active {
+          background-color: #ccc;
+        }
+        
+        /* Style the tab content */
+        .genreListcontent {
+          float: left;
+          padding: 0px 12px;
+          border: 1px solid #ccc;
+          width: 0%;
+          border-left: none;
+          height: 300px;
+        }
+
     </style>
 </head>
 <body>
+    <header>
     <h1>Detalles del usuario</h1>
+    <div id="navButtons">
+        <button onclick="location.href='allMovies.html'">Todas las películas</button>
+        <button onclick="location.href='allUsers.html'">Usuarios</button>
+        <button onclick="location.href='index.html'">Inicio</button>
+    </div>
+    </header>
+
+
     <div id="userWrapper">
         <h2 id="userDetails"></h2>
+        <h3 id="recomendaciones">Recomendación de películas similares a las que te han gustado:</h3>
         <ul id="userRecomendations"></ul>
         <button onclick="window.history.back()">Volver</button>
     </div>
@@ -28,20 +147,38 @@
             fetchUserDetails(userId);
         };
 
+
         function fetchUserDetails(userId) {
             fetch(`/api/user-details?userId=${encodeURIComponent(userId)}`)
                 .then(response => response.json())
                 .then(data => {
                     const userRecomendationsElement = document.getElementById('userRecomendations')
+                    let content = '<ul>';
                     for (let recommendation of data) {
                         const recomendationElement = document.createElement('li')
+                        recomendationElement.addEventListener('click', () => {
+                            redirectToDetails(recommendation.RecommendedMovies)
+                        })
                         recomendationElement.textContent = `Title: ${recommendation.RecommendedMovies} Strength: ${recommendation.RecommendationStrength}`
                         userRecomendationsElement.appendChild(recomendationElement)
                     }
+                    data.forEach(item => {
+                        content += `<li onclick="redirectToDetails('${item.title}')">${item.title}</li>`;
+                    });
+                    content += '</ul>';
                 })
                 .catch(error => {
                     console.error('Error fetching movie details:', error);
                 });
+        }
+
+        function redirectToDetails(title) {
+            window.location.href = `movieDetails.html?title=${encodeURIComponent(title)}`;
+        }
+
+        function fetchMovieDetails(genre, offset, limit) {
+            return fetch(`/api/genre-details?genre=${encodeURIComponent(genre)}&offset=${encodeURIComponent(offset)}&limit=${encodeURIComponent(limit)}`)
+                .then(response => response.json())
         }
     </script>
 </body>

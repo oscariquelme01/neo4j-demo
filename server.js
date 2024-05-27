@@ -195,4 +195,19 @@ WHERE ANY(genre IN m.genres WHERE genre = 'Children')
 RETURN m.title AS Movie, AVG(r.rating) AS AverageRating
 ORDER BY AverageRating DESC
 ++
+
+Recomendación solo de películas
+WITH 'The Matrix' AS movieTitle  // Cambia 'The Matrix' por el título de la película de interés
+MATCH (m1:Movie {title: movieTitle})
+MATCH (m2:Movie)
+WHERE m1 <> m2 AND any(genre IN m1.genres WHERE genre IN m2.genres)
+WITH m1, m2
+MATCH (m1)<-[r1:RATED]-(u1:User)
+WITH m1, m2, AVG(r1.rating) AS m1AvgRating
+MATCH (m2)<-[r2:RATED]-(u2:User)
+WITH m2.title AS SimilarMovie, AVG(r2.rating) AS m2AvgRating, m1AvgRating
+ORDER BY abs(m2AvgRating - m1AvgRating) ASC
+LIMIT 10
+RETURN SimilarMovie, m2AvgRating AS AverageRating
+
  */

@@ -48,7 +48,9 @@
         #results, #movieList {
             padding: 20px;
             display: flex;
-            justify-content: center;
+            justify-content: left;
+
+            left:80px;
         }
         ul {
             list-style-type: none;
@@ -62,6 +64,7 @@
             padding: 10px;
             border-bottom: 1px solid #B0C4DE;
             cursor: pointer;
+            text-align: center;
         }
         li:last-child {
             border-bottom: none;
@@ -75,14 +78,13 @@
     <header>
         <h1>Todos las peliculas</h1>
         <div id="navButtons">
-            <button onclick="location.href='allMovies.html'">Todas las películas</button>
             <button onclick="location.href='allUsers.html'">Usuarios</button>
+            <button onclick="location.href='index.html'">Inicio</button>
         </div>
     </header>
     <div id="searchContainer">
         <input type="text" id="searchInput" placeholder="Buscar por título...">
         <button onclick="buscarPeliculas()">Buscar Películas</button>
-        <button onclick="buscarPorGenero()">Buscar por género</button>
     </div>
     <ul id="paginated-container"></ul>
     <div id="pagination-numbers"></div>
@@ -94,11 +96,6 @@
             cargarDatos(url);
         }
 
-        function buscarPorGenero() {
-            const input = document.getElementById('searchInput').value;
-            const url = `/query?genres=${encodeURIComponent(input)}`;
-            cargarDatos(url);
-        }
 
         function cargarDatos(url) {
             fetch(url)
@@ -108,6 +105,7 @@
                     let content = '<ul>';
                     data.forEach(item => {
                         content += `<li onclick="redirectToDetails('${item.title}')">${item.title}</li>`;
+                        console.log(content)
                     });
                     content += '</ul>';
                     resultsElement.innerHTML = content;
