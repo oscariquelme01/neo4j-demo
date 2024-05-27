@@ -82,40 +82,10 @@
             <button onclick="location.href='index.html'">Inicio</button>
         </div>
     </header>
-    <div id="searchContainer">
-        <input type="text" id="searchInput" placeholder="Buscar por título...">
-        <button onclick="buscarPeliculas()">Buscar Películas</button>
-    </div>
     <ul id="paginated-container"></ul>
     <div id="pagination-numbers"></div>
 
     <script>
-        function buscarPeliculas() {
-            const input = document.getElementById('searchInput').value;
-            const url = input ? `/query?title=${encodeURIComponent(input)}` : `/query`;
-            cargarDatos(url);
-        }
-
-
-        function cargarDatos(url) {
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const resultsElement = document.getElementById('results');
-                    let content = '<ul>';
-                    data.forEach(item => {
-                        content += `<li onclick="redirectToDetails('${item.title}')">${item.title}</li>`;
-                        console.log(content)
-                    });
-                    content += '</ul>';
-                    resultsElement.innerHTML = content;
-                })
-                .catch(error => {
-                    console.error('Error al cargar los datos:', error);
-                    document.getElementById('results').innerHTML = '<p>Error al cargar los datos.</p>';
-                });
-        }
-
         function redirectToDetails(title) {
             window.location.href = `movieDetails.html?title=${encodeURIComponent(title)}`;
         }
@@ -129,6 +99,7 @@
                     movies.results.forEach(movie => {
                         const movieItem = document.createElement('li')
                         movieItem.textContent = `${movie.title}`
+                        movieItem.addEventListener('click', () => redirectToDetails(movie.title))
                         listElement.appendChild(movieItem)
 
                     });
